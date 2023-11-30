@@ -216,6 +216,8 @@ class Client(object):
             self.logger.warning(e)
             raise exceptions.ConnectionError()
 
+        self.sent_pdu_handler(pdu)
+
         return True
 
     def _recv_exact(self, exact_size):
@@ -263,6 +265,8 @@ class Client(object):
 
         self.logger.debug('Read %s PDU', pdu.command)
 
+        self.received_pdu_handler(pdu)
+
         if pdu.is_error():
             return pdu
 
@@ -294,6 +298,12 @@ class Client(object):
         """Handler for alert notification event"""
         self.message_received_handler(pdu=pdu)
 
+    def set_sent_pdu_handler(self, func):
+        self.sent_pdu_handler = func
+
+    def set_received_pdu_handler(self, func):
+        self.received_pdu_handler = func
+
     def set_message_received_handler(self, func):
         """Set new function to handle message receive event"""
         self.message_received_handler = func
@@ -301,7 +311,7 @@ class Client(object):
     def set_message_sent_handler(self, func):
         """Set new function to handle message sent event"""
         self.message_sent_handler = func
-        
+
     def set_query_resp_handler(self, func):
         """Set new function to handle query resp event"""
         self.query_resp_handler = func
@@ -313,6 +323,18 @@ class Client(object):
     def message_received_handler(self, pdu, **kwargs):
         """Custom handler to process received message. May be overridden"""
         self.logger.warning('Message received handler (Override me)')
+
+    def sent_pdu_handler(self, pdu, **kwargs):
+        """
+        Called when we have sent a PDU
+        """
+        self.logger.warning("Sent pdu handler (Override me)")
+
+    def received_pdu_handler(self, pdu, **kwargs):
+        """
+        Called when we have received a PDU
+        """
+        self.logger.warning("Received pdu handler (Override me)")
 
     def message_sent_handler(self, pdu, **kwargs):
         """
