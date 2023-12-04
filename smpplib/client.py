@@ -216,7 +216,7 @@ class Client(object):
             self.logger.warning(e)
             raise exceptions.ConnectionError()
 
-        self.sent_pdu_handler(pdu)
+        self.sent_pdu_handler(p)
 
         return True
 
